@@ -1,0 +1,42 @@
+{
+  "name": "brian-family",
+  "owner": { "name": "Charles Leatherwood" },
+  "metadata": {
+    "description": "Brian home server skill marketplace for the Leatherwood family",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "grocery-list",
+      "source": "./plugins/grocery-list",
+      "description": "Shared family grocery list — add, remove, and view items",
+      "category": "family",
+      "tags": ["shopping", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "family-calendar",
+      "source": "./plugins/family-calendar",
+      "description": "Shared family calendar — add events, view upcoming, get reminders",
+      "category": "family",
+      "tags": ["calendar", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "proof-bread-orders",
+      "source": "./plugins/proof-bread-orders",
+      "description": "Proof Bread catering inquiry tracking",
+      "category": "work",
+      "tags": ["proof-bread", "orders", "catering"],
+      "access": "charles-moriah"
+    },
+    {
+      "name": "home-tasks",
+      "source": "./plugins/home-tasks",
+      "description": "Shared household to-do list and chore tracking",
+      "category": "family",
+      "tags": ["tasks", "chores", "shared"],
+      "access": "all"
+    }
+  ]
+}
