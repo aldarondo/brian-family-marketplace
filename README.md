@@ -25,6 +25,7 @@ Then install the plugins you need:
 | `family-calendar` | All family | Shared calendar events and reminders |
 | `proof-bread-orders` | Charles + Moriah only | Catering inquiry tracking |
 | `home-tasks` | All family | Household to-do list and chore tracking |
+| `recipes` | All family | Family recipe storage — add, search, import from URL |
 
 ## Access Conventions
 
@@ -46,6 +47,7 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 | family-calendar | `calendar.` |
 | proof-bread-orders | `proof.` |
 | home-tasks | `tasks.` |
+| recipes | `recipes.` |
 
 ## Architecture
 

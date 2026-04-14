@@ -3,7 +3,7 @@
 > Phase 1 (memory layer) is tracked in the brian-mcp project.
 
 ## 🔄 In Progress
-- [ ] `[Code]` Phase 2: Marketplace scaffold — structure, marketplace.json, grocery-list plugin stub
+- [ ] `[Code]` Phase 2: Marketplace scaffold — structure, marketplace.json, grocery-list plugin stub (complete pending smoke test)
 
 ## 🔲 Backlog
 
@@ -19,6 +19,20 @@
 - [ ] `[Code]` Build family-calendar plugin (namespace: `calendar.*`, access: all)
 - [ ] `[Code]` Build proof-bread-orders plugin (namespace: `proof.*`, access: Charles + Moriah)
 - [ ] `[Code]` Build home-tasks plugin (namespace: `tasks.*`, access: all)
+- [ ] `[Code]` Build recipes plugin (namespace: `recipes.*`, access: all) — migrated from claude-recipes
+
+### Recipes Plugin (migrated from claude-recipes)
+> Replaces the standalone NAS MCP server. Storage moves to mcp-memory-service (namespace `recipes.*`). No Docker/JSON file infra needed.
+- [ ] `[Code]` Create plugin scaffold: `plugins/recipes/` with plugin.json, mcp/config.json, SKILL.md
+- [ ] `[Code]` Add `recipes` entry to `marketplace.json`
+- [ ] `[Code]` SKILL.md: list all recipes (search `recipes.*`)
+- [ ] `[Code]` SKILL.md: get recipe by name/ID
+- [ ] `[Code]` SKILL.md: add recipe (with ingredients, instructions, tags, source URL)
+- [ ] `[Code]` SKILL.md: search recipes by tag, ingredient, or keyword
+- [ ] `[Code]` SKILL.md: import recipe from URL (Claude fetches page, extracts JSON-LD or parses with built-in tools, stores to memory)
+- [ ] `[Code]` SKILL.md: update recipe
+- [ ] `[Code]` SKILL.md: delete recipe
+- [ ] `[Code]` Smoke test: add, retrieve, search, delete a recipe end-to-end
 
 ### Phase 6 — Family Onboarding
 - [ ] `[Human]` Add family GitHub accounts as collaborators (or confirm public repo)

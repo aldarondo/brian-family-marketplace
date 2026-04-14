@@ -37,6 +37,14 @@
       "category": "family",
       "tags": ["tasks", "chores", "shared"],
       "access": "all"
+    },
+    {
+      "name": "recipes",
+      "source": "./plugins/recipes",
+      "description": "Family recipe storage — add, search, import from URL, and retrieve recipes",
+      "category": "family",
+      "tags": ["recipes", "cooking", "shared"],
+      "access": "all"
     }
   ]
 }

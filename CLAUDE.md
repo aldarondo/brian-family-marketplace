@@ -38,6 +38,7 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `calendar.` — family-calendar
 - `proof.` — proof-bread-orders
 - `tasks.` — home-tasks
+- `recipes.` — recipes (migrated from claude-recipes)
 
 ## Confirmed
 - Domain: `brian.aldarondo.us` — memory endpoint is `https://brian.aldarondo.us/memory`
