@@ -19,4 +19,4 @@ Shared family grocery list. Add, remove, and view items using natural language.
 
 ## Requirements
 
-Brian memory endpoint must be live at `https://brian.[domain].com/memory` (see [brian-mcp](https://github.com/charlesleatherwood/brian-mcp)).
+Brian memory endpoint must be live at `https://brian.aldarondo.us/memory` (see [brian-mcp](https://github.com/aldarondo/brian-mcp)).

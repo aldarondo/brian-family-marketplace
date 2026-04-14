@@ -52,10 +52,10 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 ```
 GitHub (this repo) — plugin catalog + skill definitions
 Brian Home Server  — mcp-memory-service (shared memory backend)
-Cloudflare Tunnel  — https://brian.[domain].com/memory
+Cloudflare Tunnel  — https://brian.aldarondo.us/memory
 ```
 
-Brian memory endpoint must be running before any plugin will work. See [brian-mcp](https://github.com/charlesleatherwood/brian-mcp) for the server setup.
+Brian memory endpoint must be running before any plugin will work. See [brian-mcp](https://github.com/aldarondo/brian-mcp) for the server setup.
 
 ## Emil Note
 

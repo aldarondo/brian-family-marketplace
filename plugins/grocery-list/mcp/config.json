@@ -1,6 +1,6 @@
 {
   "memory": {
     "transport": "streamable-http",
-    "url": "https://brian.[domain].com/memory"
+    "url": "https://brian.aldarondo.us/memory"
   }
 }

@@ -7,13 +7,8 @@
 
 ## 🔲 Backlog
 
-### Open Questions (block Phase 3)
-- [ ] `[Human]` Decide domain: what is `brian.[domain].com`? (existing domain or new?)
-- [ ] `[Human]` Confirm repo visibility: public (current) or private? If private, set GITHUB_TOKEN for each family member.
-
 ### Phase 3 — Grocery List Plugin
-- [ ] `[Human]` Confirm brian-mcp memory endpoint is live (Phase 1 complete)
-- [ ] `[Code]` Update `plugins/grocery-list/mcp/config.json` with real domain URL
+- [ ] `[Human]` Confirm brian-mcp memory endpoint is live at `https://brian.aldarondo.us/memory` (Phase 1 complete)
 - [ ] `[Code]` Smoke test: install grocery-list on Charles's Claude Code, add/view/remove item
 - [ ] `[Code]` Verify memory persists across Claude Code restarts
 
@@ -34,6 +29,7 @@
 
 ## ✅ Completed
 - [x] `[Code]` 2026-04-13 — Initial scaffold: README, CLAUDE.md, ROADMAP.md, marketplace.json, grocery-list stub
+- [x] `[Human]` 2026-04-14 — Confirmed domain `brian.aldarondo.us` and public repo — all config files updated
 
 ## 🚫 Blocked
 <!-- log blockers here -->

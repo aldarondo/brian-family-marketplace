@@ -39,9 +39,9 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `proof.` — proof-bread-orders
 - `tasks.` — home-tasks
 
-## Open Questions (resolve before Phase 3 smoke test)
-- Domain: what is `brian.[domain].com`?
-- Confirm repo visibility: currently public
+## Confirmed
+- Domain: `brian.aldarondo.us` — memory endpoint is `https://brian.aldarondo.us/memory`
+- Repo: public at `aldarondo/brian-family-marketplace`
 
 ## Testing Requirements (mandatory)
 - Validate all JSON files are well-formed before committing
