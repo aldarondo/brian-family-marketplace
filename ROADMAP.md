@@ -7,13 +7,8 @@
 
 ## 🔲 Backlog
 
-### Phase 4 — Access Control Conventions
-- [ ] `[Code]` Add access labels + namespace table to each plugin README (grocery-list and recipes already have them; add to remaining stubs when built)
-
-### Phase 5 — Additional Plugins
-- [ ] `[Code]` Build family-calendar plugin (namespace: `calendar.*`, access: all)
-- [ ] `[Code]` Build proof-bread-orders plugin (namespace: `proof.*`, access: Charles + Moriah)
-- [ ] `[Code]` Build home-tasks plugin (namespace: `tasks.*`, access: all)
+### Phase 4 — Access Control
+- [ ] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
 
 ### Phase 6 — Family Onboarding
 - [ ] `[Human]` Confirm GitHub accounts for Moriah, Jack, Quincy (public repo — no collab needed, but good to note)

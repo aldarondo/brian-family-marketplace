@@ -35,9 +35,6 @@ plugins/[name]/
 ## Memory Namespace Rules
 Each plugin owns a unique prefix — never write memories outside your plugin's prefix:
 - `grocery.` — grocery-list
-- `calendar.` — family-calendar
-- `proof.` — proof-bread-orders
-- `tasks.` — home-tasks
 - `recipes.` — recipes (migrated from claude-recipes)
 - `prescriptions.` — prescriptions (scoped per-user via `user:[name]` tag)
 

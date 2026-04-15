@@ -22,9 +22,6 @@ Then install the plugins you need:
 | Plugin | Access | Description |
 |---|---|---|
 | `grocery-list` | All family | Shared grocery list — add, remove, view items |
-| `family-calendar` | All family | Shared calendar events and reminders |
-| `proof-bread-orders` | Charles + Moriah only | Catering inquiry tracking |
-| `home-tasks` | All family | Household to-do list and chore tracking |
 | `recipes` | All family | Family recipe storage — add, search, import from URL |
 | `prescriptions` | Per-user (private) | Medications, vitamins, and supplements — each person sees only their own list |
 
@@ -45,9 +42,6 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 | Plugin | Namespace |
 |---|---|
 | grocery-list | `grocery.` |
-| family-calendar | `calendar.` |
-| proof-bread-orders | `proof.` |
-| home-tasks | `tasks.` |
 | recipes | `recipes.` |
 | prescriptions | `prescriptions.` (+ `user:[name]` scoping) |
 
@@ -69,10 +63,10 @@ Emil interacts via Google Nest only. Brian's supervisor layer handles his skill 
 
 | Person | Plugins |
 |---|---|
-| Charles | All |
-| Moriah | grocery-list, family-calendar, proof-bread-orders |
-| Jack | grocery-list, family-calendar |
-| Quincy | grocery-list, family-calendar |
+| Charles | grocery-list, recipes, prescriptions |
+| Moriah | grocery-list, recipes, prescriptions |
+| Jack | grocery-list, recipes |
+| Quincy | grocery-list, recipes |
 | Emil | N/A — handled by Brian directly |
 
 ## Project Status
