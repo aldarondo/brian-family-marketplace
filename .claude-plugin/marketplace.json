@@ -45,6 +45,14 @@
       "category": "family",
       "tags": ["recipes", "cooking", "shared"],
       "access": "all"
+    },
+    {
+      "name": "prescriptions",
+      "source": "./plugins/prescriptions",
+      "description": "Private medication, prescription, vitamin, and supplement tracker — each person sees only their own list",
+      "category": "health",
+      "tags": ["health", "medications", "private"],
+      "access": "per-user"
     }
   ]
 }

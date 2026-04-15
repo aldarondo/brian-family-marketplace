@@ -39,6 +39,7 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `proof.` — proof-bread-orders
 - `tasks.` — home-tasks
 - `recipes.` — recipes (migrated from claude-recipes)
+- `prescriptions.` — prescriptions (scoped per-user via `user:[name]` tag)
 
 ## Confirmed
 - Domain: `brian.aldarondo.us` — memory endpoint is `https://brian.aldarondo.us/memory`

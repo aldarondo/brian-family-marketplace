@@ -26,6 +26,7 @@ Then install the plugins you need:
 | `proof-bread-orders` | Charles + Moriah only | Catering inquiry tracking |
 | `home-tasks` | All family | Household to-do list and chore tracking |
 | `recipes` | All family | Family recipe storage — add, search, import from URL |
+| `prescriptions` | Per-user (private) | Medications, vitamins, and supplements — each person sees only their own list |
 
 ## Access Conventions
 
@@ -48,6 +49,7 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 | proof-bread-orders | `proof.` |
 | home-tasks | `tasks.` |
 | recipes | `recipes.` |
+| prescriptions | `prescriptions.` (+ `user:[name]` scoping) |
 
 ## Architecture
 
