@@ -5,18 +5,37 @@ description: Add, remove, or view items on the shared family grocery list
 You have access to a shared memory layer (Brian's mcp-memory-service). All grocery data uses the namespace prefix `grocery.`.
 
 ## Viewing the list
-Search memories with query `"grocery list items"` to retrieve all current items.
+Search memories with query `"grocery list items"` and tags `["grocery.item"]`. Display as a clean numbered list showing item name and who added it.
+
+If no items are found, say "The grocery list is empty."
 
 ## Adding an item
-Add a memory tagged `grocery.item` with:
-- The item name
-- Who added it (ask if not stated)
-- Optional: quantity or notes
+Store a memory with this content:
+
+```
+grocery.item: [item name] — added by [person] on [date]
+```
+
+Tag it with `grocery.item,grocery`.
+
+Ask who is adding if not stated. Confirm the add and show the updated full list.
 
 ## Removing an item
-Delete the memory for that specific item by searching for it first, then deleting by ID.
+1. Search for the item by name with tags `["grocery.item"]`
+2. Show the match and confirm before deleting
+3. Delete by content_hash
+4. Show the updated list
+
+## Checking off / marking as bought
+Delete the memory for that item (it was purchased — remove it from the list). Confirm and show the updated list.
+
+## Clearing the entire list
+1. Search all memories tagged `grocery.item`
+2. Confirm with the user before bulk deletion
+3. Delete each by content_hash
+4. Confirm the list is now empty
 
 ## Rules
-- Always confirm what you did after any change.
-- Always show the current list after any add or remove operation.
-- Never write to any namespace other than `grocery.*`.
+- Never write to any namespace other than `grocery.*`
+- Always show the current list after any add or remove operation
+- Always ask for confirmation before deleting more than one item at once

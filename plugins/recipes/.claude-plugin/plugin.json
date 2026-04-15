@@ -1,0 +1,6 @@
+{
+  "name": "recipes",
+  "description": "Family recipe storage — add, search, import from URL, and retrieve recipes",
+  "version": "1.0.0",
+  "mcpServers": "mcp/config.json"
+}
