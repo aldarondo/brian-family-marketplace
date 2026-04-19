@@ -48,6 +48,10 @@ If you already set `PRESCRIPTIONS_USER`, the health skill will fall back to that
 
 Planned sources accept writes today (so data accumulates) but don't contribute to the evaluation yet.
 
+## Writing Data Into Brian (for vendor MCP authors)
+
+This plugin is **read-only** for external health data — it consumes `health.vital` and `health.activity` memories written by upstream vendor MCPs (Withings, Whoop, Google Health Connect bridge, etc.). If you are building one of those MCPs, code against the contract in [SCHEMA.md](./SCHEMA.md): it pins tag layout, required fields, units, idempotency rules, and source slugs. Do not invent your own shape — the health skill assumes the schema.
+
 ## Privacy
 
 All memory reads and writes are filtered by `user:[name]` tag, across both `health.*` and `prescriptions.*`. The skill refuses cross-person queries. Only Moriah can access Emil's data.

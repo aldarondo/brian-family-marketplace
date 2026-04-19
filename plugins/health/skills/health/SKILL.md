@@ -54,6 +54,8 @@ The evaluator walks this registry in order. Each source contributes a **findings
 | Sleep / activity | Planned | `memory_search(tags: ["health.activity", "user:[name]"])` | Weekly averages, deviation from baseline — stub only |
 | Self-reported symptoms | Planned | `memory_search(tags: ["health.note", "user:[name]"])` | Recent complaints, recurring issues — stub only |
 
+External data reaches this plugin through upstream vendor MCPs (Withings, Whoop, Google Health Connect bridge, etc.) that write `health.vital` and `health.activity` memories into `brian-mcp`. The exact shape those writers must follow is pinned in **[SCHEMA.md](../../SCHEMA.md)** — field names, units, required tags, idempotency rules, and source slugs. When implementing a Planned evaluator below, read from that schema; do not introduce ad-hoc shapes.
+
 When adding a new source later: add a row above, add a matching section under **Source Evaluators**, and update the **Overall Assessment** synthesis if the new source changes the risk model.
 
 ---
