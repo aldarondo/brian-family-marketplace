@@ -1,20 +1,30 @@
 # brian-family-marketplace
 
-Brian home server skill marketplace for the Leatherwood family. Distributes shared Claude Code skills (grocery list, family calendar, Proof Bread orders, and more) to household members via a single install command.
+Brian home server skill marketplace for the Leatherwood family. Distributes shared Claude Code skills (grocery list, recipes, prescriptions) to household members via a single install command.
+
+## Prerequisites
+
+All plugins connect to the Brian memory server at `https://brian.aldarondo.family/mcp` via Cloudflare Access. Set these env vars in your shell before using any plugin:
+
+```bash
+export BRIAN_MCP_CLIENT_ID="your-service-token-client-id"
+export BRIAN_MCP_CLIENT_SECRET="your-service-token-client-secret"
+```
+
+Get your token from Charles.
 
 ## Install
 
 ```bash
-/plugin marketplace add charlesleatherwood/brian-family-marketplace
+/plugin marketplace add aldarondo/brian-family-marketplace
 ```
 
 Then install the plugins you need:
 
 ```bash
 /plugin install grocery-list@brian-family
-/plugin install family-calendar@brian-family
-# proof-bread-orders: Charles + Moriah only
-/plugin install proof-bread-orders@brian-family
+/plugin install recipes@brian-family
+/plugin install prescriptions@brian-family
 ```
 
 ## Available Plugins
@@ -50,7 +60,7 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 ```
 GitHub (this repo) — plugin catalog + skill definitions
 Brian Home Server  — mcp-memory-service (shared memory backend)
-Cloudflare Tunnel  — https://brian.aldarondo.us/memory
+Cloudflare Tunnel  — https://brian.aldarondo.family/mcp
 ```
 
 Brian memory endpoint must be running before any plugin will work. See [brian-mcp](https://github.com/aldarondo/brian-mcp) for the server setup.
@@ -68,6 +78,38 @@ Emil interacts via Google Nest only. Brian's supervisor layer handles his skill 
 | Jack | grocery-list, recipes |
 | Quincy | grocery-list, recipes |
 | Emil | N/A — handled by Brian directly |
+
+## Updating Plugins
+
+When Charles pushes a new plugin version (updated SKILL.md, config changes, or a new plugin entirely), each family member updates their local install with two commands:
+
+```bash
+# Step 1 — pull the latest catalog from GitHub
+/plugin marketplace update brian-family
+
+# Step 2 — reinstall the specific plugin(s) that changed
+/plugin install grocery-list@brian-family
+/plugin install recipes@brian-family
+/plugin install prescriptions@brian-family
+```
+
+Run both steps. Skipping Step 1 means you'll install from a stale catalog. You only need to reinstall the plugins that changed, not all of them.
+
+### How to Know When to Update
+
+Charles will announce changes in the family group chat with the affected plugin name and a brief summary of what changed. There's no automatic update check.
+
+### Plugin Versioning
+
+Plugin versions are tracked via git tags on this repo. The `marketplace.json` catalog lists the current version of each plugin. You can see what changed by checking the [commit history](https://github.com/aldarondo/brian-family-marketplace/commits/main).
+
+### Adding a New Plugin (Charles Only)
+
+1. Create `plugins/[name]/` following the layout in CLAUDE.md
+2. Add an entry to `marketplace.json`
+3. Write a `README.md` with the **Access:** label
+4. Commit and push
+5. Notify family to run the two-step update above
 
 ## Project Status
 

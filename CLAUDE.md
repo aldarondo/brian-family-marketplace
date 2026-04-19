@@ -4,7 +4,7 @@
 GitHub-hosted Claude Code plugin marketplace that distributes shared family skills (grocery list, calendar, Proof Bread orders) to Leatherwood household members via the Brian home server memory layer.
 
 ## Relationship to brian-mcp
-Phase 1 (mcp-memory-service setup, Cloudflare tunnel, Windows service) lives in the `brian-mcp` project. This repo starts at Phase 2 — the marketplace catalog and plugin definitions. The memory endpoint URL (`https://brian.[domain].com/memory`) must be live before any plugin will function.
+Phase 1 (mcp-memory-service setup, Cloudflare tunnel, Windows service) lives in the `brian-mcp` project. This repo starts at Phase 2 — the marketplace catalog and plugin definitions. The memory endpoint URL (`https://brian.aldarondo.family/mcp`) must be live before any plugin will function.
 
 ## Key Commands
 ```bash
@@ -39,7 +39,8 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `prescriptions.` — prescriptions (scoped per-user via `user:[name]` tag)
 
 ## Confirmed
-- Domain: `brian.aldarondo.us` — memory endpoint is `https://brian.aldarondo.us/memory`
+- Memory endpoint: `https://brian.aldarondo.family/mcp` (production, Cloudflare Access)
+- Auth: service token via `BRIAN_MCP_CLIENT_ID` + `BRIAN_MCP_CLIENT_SECRET` env vars
 - Repo: public at `aldarondo/brian-family-marketplace`
 
 ## Testing Requirements (mandatory)
@@ -48,3 +49,7 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - Tests live in `tests/`
 
 @~/Documents/GitHub/CLAUDE.md
+
+## Git Rules
+- Never create pull requests. Push directly to main.
+- solo/auto-push OK

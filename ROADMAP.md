@@ -8,22 +8,24 @@
 ## 🔲 Backlog
 
 ### Phase 4 — Access Control
-- [ ] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
+- [x] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
 
 ### Phase 6 — Family Onboarding
 - [ ] `[Human]` Confirm GitHub accounts for Moriah, Jack, Quincy (public repo — no collab needed, but good to note)
-- [ ] `[Code]` Install plugins for Moriah, Jack, Quincy (Charles does this on each machine)
+- [ ] `[Human]` Install plugins for Moriah, Jack, Quincy (Charles does this on each machine) — reassigned from [Code]: requires physical access to each person's computer
 
 ### Phase 7 — Ongoing Ops
-- [ ] `[Code]` Document update workflow in README (plugin versioning + family update flow)
+- [x] `[Code]` Document update workflow in README (plugin versioning + family update flow)
 
 ## ✅ Completed
+- [x] `[Code]` 2026-04-14 — Confirmed all 3 plugin READMEs have Access: labels (grocery-list, recipes, prescriptions)
+- [x] `[Code]` 2026-04-14 — Documented plugin update workflow in README (two-step update, versioning, new plugin procedure)
 - [x] `[Code]` 2026-04-14 — prescriptions plugin built: plugin.json, mcp/config.json, SKILL.md (full intake/add/view/update/refill/export/interaction-check), README.md
 - [x] `[Code]` 2026-04-14 — Charles's full supplement stack seeded into memory (19 active items + 1 pending) from C:\Brian\data\charles\prescriptions.md
 - [x] `[Code]` 2026-04-14 — Migrated from C:\Brian\skills\prescriptions — memory-backed, user-scoped via user:[name] tags
 - [x] `[Code]` 2026-04-14 — Initial scaffold: README, CLAUDE.md, ROADMAP.md, marketplace.json, grocery-list stub
 - [x] `[Human]` 2026-04-14 — Confirmed domain and public repo; all config files updated
-- [x] `[Human]` 2026-04-14 — Memory endpoint confirmed live: `http://192-168-0-64.aldarondo.direct.quickconnect.to:8765/mcp`
+- [x] `[Human]` 2026-04-14 — Memory endpoint confirmed live: `https://brian.aldarondo.family/mcp` (Cloudflare Access, OTP for family, service token for Claude Code)
 - [x] `[Code]` 2026-04-14 — All plugin mcp/config.json files updated with real endpoint URL
 - [x] `[Code]` 2026-04-14 — grocery-list plugin: SKILL.md rewritten with full add/view/remove/clear instructions and tag conventions
 - [x] `[Code]` 2026-04-14 — grocery-list smoke test passed: store → search → delete via brian-memory MCP

@@ -30,7 +30,7 @@ Each recipe is stored as a memory tagged `recipes.recipe` with optional category
 
 ## Requirements
 
-Brian memory endpoint must be live at `http://192-168-0-64.aldarondo.direct.quickconnect.to:8765/mcp` (see [brian-mcp](https://github.com/aldarondo/brian-mcp)).
+Brian memory endpoint must be live at `https://brian.aldarondo.family/mcp` (see [brian-mcp](https://github.com/aldarondo/brian-mcp)). Requires `BRIAN_MCP_CLIENT_ID` and `BRIAN_MCP_CLIENT_SECRET` env vars set (Cloudflare Access service token).
 
 ## Migrated From
 

@@ -19,4 +19,4 @@ Shared family grocery list. Add, remove, and view items using natural language.
 
 ## Requirements
 
-Brian memory endpoint must be live at `https://brian.aldarondo.us/memory` (see [brian-mcp](https://github.com/aldarondo/brian-mcp)).
+Brian memory endpoint must be live at `https://brian.aldarondo.family/mcp` (see [brian-mcp](https://github.com/aldarondo/brian-mcp)). Requires `BRIAN_MCP_CLIENT_ID` and `BRIAN_MCP_CLIENT_SECRET` env vars set (Cloudflare Access service token).

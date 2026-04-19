@@ -1,6 +1,10 @@
 {
   "memory": {
     "transport": "streamable-http",
-    "url": "http://192-168-0-64.aldarondo.direct.quickconnect.to:8765/mcp"
+    "url": "https://brian.aldarondo.family/mcp",
+    "headers": {
+      "CF-Access-Client-Id": "${BRIAN_MCP_CLIENT_ID}",
+      "CF-Access-Client-Secret": "${BRIAN_MCP_CLIENT_SECRET}"
+    }
   }
 }
