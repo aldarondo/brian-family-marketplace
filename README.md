@@ -25,6 +25,7 @@ Then install the plugins you need:
 /plugin install grocery-list@brian-family
 /plugin install recipes@brian-family
 /plugin install prescriptions@brian-family
+/plugin install health@brian-family
 ```
 
 ## Available Plugins
@@ -34,6 +35,7 @@ Then install the plugins you need:
 | `grocery-list` | All family | Shared grocery list — add, remove, view items |
 | `recipes` | All family | Family recipe storage — add, search, import from URL |
 | `prescriptions` | Per-user (private) | Medications, vitamins, and supplements — each person sees only their own list |
+| `health` | Per-user (private) | Personal health aggregator — pulls from prescriptions (more sources over time) to produce a single health evaluation |
 
 ## Access Conventions
 
@@ -54,6 +56,7 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 | grocery-list | `grocery.` |
 | recipes | `recipes.` |
 | prescriptions | `prescriptions.` (+ `user:[name]` scoping) |
+| health | `health.` (+ `user:[name]` scoping; reads `prescriptions.*` for same user) |
 
 ## Architecture
 

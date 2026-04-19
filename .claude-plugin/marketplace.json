@@ -29,6 +29,14 @@
       "category": "health",
       "tags": ["health", "medications", "private"],
       "access": "per-user"
+    },
+    {
+      "name": "health",
+      "source": "./plugins/health",
+      "description": "Private personal health aggregator — pulls data from prescriptions (and more sources over time) to produce a single health evaluation",
+      "category": "health",
+      "tags": ["health", "evaluation", "private"],
+      "access": "per-user"
     }
   ]
 }
