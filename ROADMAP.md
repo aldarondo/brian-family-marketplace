@@ -33,5 +33,5 @@
 - [x] `[Code]` 2026-04-14 — recipes smoke test passed: store → search by tag → delete via brian-memory MCP
 - [x] `[Code]` 2026-04-14 — recipes migrated from claude-recipes (claude-recipes parked/archived)
 
-## 🚫 Blocked
-<!-- log blockers here -->
+## 🚫 Blocked / Known Constraints
+- **Mobile access**: Claude mobile app has no MCP support — marketplace plugins are unavailable on iOS/Android. No workaround until Anthropic ships MCP for mobile. Family members on mobile-only (Jack, Quincy) cannot use any plugin skills. Possible mitigation: Telegram bot front-end (see brian-telegram project idea).
