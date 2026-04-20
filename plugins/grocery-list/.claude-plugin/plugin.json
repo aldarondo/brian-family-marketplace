@@ -1,6 +1,5 @@
 {
   "name": "grocery-list",
   "description": "Shared family grocery list",
-  "version": "1.0.0",
-  "mcpServers": "mcp/config.json"
+  "version": "1.0.2"
 }

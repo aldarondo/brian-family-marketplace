@@ -1,6 +1,5 @@
 {
   "name": "prescriptions",
   "description": "Private medication, prescription, vitamin, and supplement tracker — each person sees only their own list",
-  "version": "1.0.0",
-  "mcpServers": "mcp/config.json"
+  "version": "1.0.2"
 }
