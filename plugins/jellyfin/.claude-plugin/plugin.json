@@ -1,0 +1,5 @@
+{
+  "name": "jellyfin",
+  "description": "Discover and queue movies and TV shows for the Jellyfin library via Radarr and Sonarr",
+  "version": "1.0.1"
+}

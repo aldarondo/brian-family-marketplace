@@ -37,6 +37,14 @@
       "category": "health",
       "tags": ["health", "evaluation", "private"],
       "access": "per-user"
+    },
+    {
+      "name": "jellyfin",
+      "source": "./plugins/jellyfin",
+      "description": "Discover and queue movies and TV shows for the Jellyfin library — new releases and acclaimed older content",
+      "category": "media",
+      "tags": ["media", "movies", "tv", "jellyfin"],
+      "access": "charles"
     }
   ]
 }

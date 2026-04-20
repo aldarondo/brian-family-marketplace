@@ -1,0 +1,6 @@
+{
+  "jellyfin": {
+    "transport": "sse",
+    "url": "http://${NAS_IP}:8000/sse"
+  }
+}

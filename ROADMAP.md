@@ -18,6 +18,8 @@
 - [x] `[Code]` Document update workflow in README (plugin versioning + family update flow)
 
 ## ✅ Completed
+- [x] `[Code]` 2026-04-20 — jellyfin plugin v1.0.1: new-releases + old-releases skills redesigned for Telegram (conversational MCP-tool flow, natural pick language, genre/decade filters, movies+TV in one pass); added to marketplace.json (access: charles)
+- [x] `[Code]` 2026-04-19 — Fixed plugin.json mcpServers schema (string path → inline object); all 3 plugins installable via `claude plugin install`
 - [x] `[Code]` 2026-04-14 — Confirmed all 3 plugin READMEs have Access: labels (grocery-list, recipes, prescriptions)
 - [x] `[Code]` 2026-04-14 — Documented plugin update workflow in README (two-step update, versioning, new plugin procedure)
 - [x] `[Code]` 2026-04-14 — prescriptions plugin built: plugin.json, mcp/config.json, SKILL.md (full intake/add/view/update/refill/export/interaction-check), README.md
@@ -33,5 +35,8 @@
 - [x] `[Code]` 2026-04-14 — recipes smoke test passed: store → search by tag → delete via brian-memory MCP
 - [x] `[Code]` 2026-04-14 — recipes migrated from claude-recipes (claude-recipes parked/archived)
 
+## ✅ Resolved
+- **Mobile access** — brian-telegram Telegram bot deployed (2026-04-19): plugins installed in ~/.claude mounted into container; family can now use all skills via Telegram on any device.
+
 ## 🚫 Blocked / Known Constraints
-- **Mobile access**: Claude mobile app has no MCP support — marketplace plugins are unavailable on iOS/Android. No workaround until Anthropic ships MCP for mobile. Family members on mobile-only (Jack, Quincy) cannot use any plugin skills. Possible mitigation: Telegram bot front-end (see brian-telegram project idea).
+<!-- none -->
