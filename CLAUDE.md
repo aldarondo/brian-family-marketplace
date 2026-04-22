@@ -37,6 +37,7 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `grocery.` — grocery-list
 - `recipes.` — recipes (migrated from claude-recipes)
 - `prescriptions.` — prescriptions (scoped per-user via `user:[name]` tag)
+- `food.` — food-log (scoped per-user via `user:[name]` tag)
 
 ## Confirmed
 - Memory endpoint: `https://brian.aldarondo.family/mcp` (production, Cloudflare Access)
