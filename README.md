@@ -37,15 +37,38 @@ Then install the plugins you need:
 | `prescriptions` | Per-user (private) | Medications, vitamins, and supplements — each person sees only their own list |
 | `health` | Per-user (private) | Personal health aggregator — pulls from prescriptions (more sources over time) to produce a single health evaluation |
 
+## Environment Variables
+
+All env vars needed across every plugin:
+
+| Variable | Required By | Description |
+|---|---|---|
+| `BRIAN_MCP_CLIENT_ID` | All plugins | Cloudflare Access service token client ID |
+| `BRIAN_MCP_CLIENT_SECRET` | All plugins | Cloudflare Access service token client secret |
+| `PRESCRIPTIONS_USER` | prescriptions | Your name tag (e.g. `charles`) — scopes data to your record |
+| `HEALTH_USER` | health | Your name tag — scopes health evaluations to your record |
+| `NAS_IP` | jellyfin | LAN IP of the Synology NAS running Radarr/Sonarr |
+
+Get `BRIAN_MCP_CLIENT_ID` and `BRIAN_MCP_CLIENT_SECRET` from Charles. Set all env vars in your shell profile before installing plugins.
+
 ## Access Conventions
 
-Each plugin README carries an **Access:** label:
+Each plugin README carries an **Access:** label. The label maps to the `access` field in `marketplace.json`:
 
-- **Access:** All family members
-- **Access:** Charles + Moriah only
-- **Access:** Charles only
+| README Label | marketplace.json value | Who can install |
+|---|---|---|
+| All family | `"all"` | Everyone |
+| Per-user (private) | `"per-user"` | Anyone, but data is isolated per user |
+| Charles only | `"charles"` | Charles only |
 
 There is no technical auth layer — this is a family trust model. Only install plugins appropriate for your role.
+
+## Security Considerations
+
+- **Credentials:** Never store `BRIAN_MCP_CLIENT_ID` or `BRIAN_MCP_CLIENT_SECRET` in a file that gets committed to git. Use your shell profile (`~/.zshrc`, `~/.bashrc`) or a `.env` file that is listed in `.gitignore`.
+- **Token rotation:** If a service token is compromised, generate a new one in Cloudflare Access and notify Charles to update any other installs.
+- **Privacy enforcement:** User isolation for prescriptions and health data is enforced at the skill layer via `user:[name]` memory tags. The brian-mcp memory service stores all data in a shared namespace — the tag convention is the only isolation mechanism. Do not store sensitive data under a prefix you don't own.
+- **Rate limits:** The brian-mcp memory endpoint does not currently enforce rate limits. Avoid bulk operations in tight loops; a reasonable working cadence (a few reads/writes per skill invocation) is fine.
 
 ## Memory Namespace Isolation
 
@@ -116,7 +139,7 @@ Plugin versions are tracked via git tags on this repo. The `marketplace.json` ca
 
 ## Project Status
 
-Phase 2 scaffolded. Memory layer (Phase 1) lives in [brian-mcp](https://github.com/charlesleatherwood/brian-mcp). See [ROADMAP.md](ROADMAP.md) for what's planned.
+Phase 2 scaffolded. Memory layer (Phase 1) lives in [brian-mcp](https://github.com/aldarondo/brian-mcp). See [ROADMAP.md](ROADMAP.md) for what's planned.
 
 ---
 **Publisher:** Xity Software, LLC

@@ -8,7 +8,7 @@ ERRORS=0
 
 validate() {
   local file="$1"
-  if python3 -c "import json, sys; json.load(open('$file'))" 2>/dev/null; then
+  if node -e "JSON.parse(require('fs').readFileSync('$file','utf8'))" 2>/dev/null; then
     echo "  OK: $file"
   else
     echo "  FAIL: $file is not valid JSON"

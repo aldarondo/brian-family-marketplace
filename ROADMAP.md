@@ -1,6 +1,10 @@
 # brian-family-marketplace Roadmap
 > Tag key: `[Code]` = Claude Code · `[Cowork]` = Claude Cowork · `[Human]` = Charles must act
 > Phase 1 (memory layer) is tracked in the brian-mcp project.
+>
+> **Phase map:** Phase 1 = memory layer (brian-mcp) · Phase 2 = marketplace scaffold + core plugins · Phase 3 = additional plugins (recipes, prescriptions) · Phase 4 = access control labels · Phase 5 = Telegram/mobile access (brian-telegram) · Phase 6 = family onboarding · Phase 7 = ongoing ops
+>
+> **Plugin versioning:** health is `0.1.0` because vendor MCP integrations (Withings, Whoop, etc.) are not yet connected — evaluator stubs exist but produce no findings. All other plugins are `1.0.x` stable.
 
 ## 🔄 In Progress
 <!-- nothing active right now -->
