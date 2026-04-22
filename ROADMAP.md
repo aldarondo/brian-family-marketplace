@@ -7,6 +7,9 @@
 
 ## 🔲 Backlog
 
+### New Plugins
+- [ ] `[Code]` food-log plugin — image-to-food-log via Claude vision + brian-mcp storage. Full plan: [plans/food-log-plugin.md](plans/food-log-plugin.md)
+
 ### Phase 4 — Access Control
 - [x] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
 
