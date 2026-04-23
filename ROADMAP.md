@@ -25,6 +25,7 @@
 - [x] `[Code]` Document update workflow in README (plugin versioning + family update flow)
 
 ## ✅ Completed
+- [x] `[Code]` 2026-04-23 — roadmap plugin v1.0.0: plugin.json, mcp/config.json, SKILL.md (list/register/add-entry/view/recent/remove with three GitHub write flows — local clone, `gh` CLI, github MCP), README.md; added to marketplace.json (access: charles); namespace `roadmap.*` registered in CLAUDE.md and README.md
 - [x] `[Code]` 2026-04-22 — food-log plugin v1.0.0: plugin.json, mcp/config.json, SKILL.md (log from screenshot, view today/past day, weekly summary, delete), README.md; added to marketplace.json (access: per-user); wired into brian-telegram bot.js (PLUGIN_VERSIONS + PLUGIN_ACCESS + /help food-log)
 - [x] `[Code]` 2026-04-20 — jellyfin plugin v1.0.1: new-releases + old-releases skills redesigned for Telegram (conversational MCP-tool flow, natural pick language, genre/decade filters, movies+TV in one pass); added to marketplace.json (access: charles)
 - [x] `[Code]` 2026-04-19 — Fixed plugin.json mcpServers schema (string path → inline object); all 3 plugins installable via `claude plugin install`

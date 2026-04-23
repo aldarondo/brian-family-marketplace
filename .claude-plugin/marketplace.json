@@ -53,6 +53,14 @@
       "category": "health",
       "tags": ["health", "food", "nutrition", "macros", "private"],
       "access": "per-user"
+    },
+    {
+      "name": "roadmap",
+      "source": "./plugins/roadmap",
+      "description": "Personal project roadmap manager — registers projects in Brian memory and adds tasks directly to their GitHub ROADMAP.md files",
+      "category": "dev",
+      "tags": ["dev", "github", "roadmap", "private"],
+      "access": "charles"
     }
   ]
 }
