@@ -36,6 +36,7 @@ Then install the plugins you need:
 | `recipes` | All family | Family recipe storage — add, search, import from URL |
 | `prescriptions` | Per-user (private) | Medications, vitamins, and supplements — each person sees only their own list |
 | `health` | Per-user (private) | Personal health aggregator — pulls from prescriptions (more sources over time) to produce a single health evaluation |
+| `roadmap` | Charles only | Personal project roadmap manager — registers projects in Brian memory and adds tasks to their GitHub ROADMAP.md files |
 
 ## Environment Variables
 
@@ -47,6 +48,7 @@ All env vars needed across every plugin:
 | `BRIAN_MCP_CLIENT_SECRET` | All plugins | Cloudflare Access service token client secret |
 | `PRESCRIPTIONS_USER` | prescriptions | Your name tag (e.g. `charles`) — scopes data to your record |
 | `HEALTH_USER` | health | Your name tag — scopes health evaluations to your record |
+| `ROADMAP_USER` | roadmap | Your name tag — scopes the project registry to your record (falls back to `BRIAN_USER`) |
 | `NAS_IP` | jellyfin | LAN IP of the Synology NAS running Radarr/Sonarr |
 
 Get `BRIAN_MCP_CLIENT_ID` and `BRIAN_MCP_CLIENT_SECRET` from Charles. Set all env vars in your shell profile before installing plugins.
@@ -80,6 +82,7 @@ All plugins store data in Brian's shared memory layer. Each plugin uses a unique
 | recipes | `recipes.` |
 | prescriptions | `prescriptions.` (+ `user:[name]` scoping) |
 | health | `health.` (+ `user:[name]` scoping; reads `prescriptions.*` for same user) |
+| roadmap | `roadmap.` (+ `user:[name]` scoping) |
 
 ## Architecture
 

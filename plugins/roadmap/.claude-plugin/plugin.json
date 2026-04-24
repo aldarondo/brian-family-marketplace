@@ -1,0 +1,5 @@
+{
+  "name": "roadmap",
+  "description": "Personal project roadmap manager — registers projects in Brian memory and adds tasks to their GitHub ROADMAP.md files",
+  "version": "1.0.0"
+}
