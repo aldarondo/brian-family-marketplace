@@ -1,11 +1,12 @@
 ---
-description: Use this skill whenever a family member wants an aggregated view or evaluation of their health. Pulls data from multiple sources (currently prescriptions; labs, vitals, sleep, exercise will be added later) and produces a single assessment. Triggers: "how is my health", "give me a health summary", "health check", "evaluate my health", "what does my medication list say about my health", "any health concerns I should know about", "health report", "run a health evaluation", "what are my health risks", "do I have any interaction risks", "what's my current polypharmacy load", "build my health snapshot"
+description: Use this skill whenever a family member wants an aggregated view or evaluation of their health. Reads whatever health data is present in brian-mcp memory (prescriptions, food-log, meal-plan, vitals and activity from vendor MCPs, manual entries) and produces a single status-level report with concerns and recommendations. Triggers include "how is my health", "health check", "evaluate my health", "run a health evaluation", "any concerns", "compare my health", "what does my data say", "email me my weekly summary", "log my BP", "record my weight".
 ---
 
 # Skill: Personal Health Aggregator & Evaluator
 
-**Storage**: Brian mcp-memory-service, namespace `health.*`, scoped per user via `user:[name]` tag.
-**Reads from**: `prescriptions.*` (same user only). Future sources will be added as new sections in this file.
+**Storage**: brian-mcp memory at `https://brian.aldarondo.family/mcp`, namespace `health.*`, scoped per user via `user:[name]` tag.
+**Reads from**: `health.*`, `prescriptions.*`, `food.*`, `mealplan.*` (the last is shared).
+**Talks to**: only the `memory` MCP server for reads/writes, and the `email` MCP server for optional outgoing email. Never calls Withings, Whoop, Apple Health, or any other vendor API directly — those are upstream MCPs that write into memory.
 
 ---
 
@@ -13,142 +14,185 @@ description: Use this skill whenever a family member wants an aggregated view or
 
 **Who is the current user?**
 
-1. Check the current session context or CLAUDE.md for `HEALTH_USER: [name]`. Fall back to `PRESCRIPTIONS_USER: [name]` if set.
-2. If neither is set, ask once: "Just to confirm — what's your name? (Charles, Moriah, Jack, or Quincy)"
+1. Check the session context or CLAUDE.md for `HEALTH_USER: [name]`. Fall back to `PRESCRIPTIONS_USER` or `FOOD_LOG_USER` if set.
+2. If none are set, ask once: "Just to confirm — what's your name? (Charles, Moriah, Jack, or Quincy)"
 3. Store the confirmed name as the active user for all operations this session.
 
 **Privacy rules:**
 
 | Rule | Behavior |
 |---|---|
-| Default: private | Only read memories tagged `user:[name]` where name = active user, across both `health.*` and `prescriptions.*` |
+| Default: private | Reads memories tagged `user:[name]` where name = active user, across `health.*`, `prescriptions.*`, and `food.*` |
+| `mealplan.*` exception | `mealplan.*` is shared family data (no per-user filter) — use it only as a dietary-pattern signal, never attribute it to a person's private record |
 | Moriah ↔ Emil | Moriah can read and evaluate Emil's data; if Moriah says "for Emil" or "Emil's health" → target is `user:emil` |
 | Cross-person queries refused | "I keep health data private. I can only evaluate [Name]'s health with them directly." |
-| No medical advice | This skill summarizes and flags patterns. It is not a diagnosis. Always recommend following up with a clinician for anything flagged. |
+| No medical advice | Summarize and flag patterns; never diagnose. Close every report with a reminder to follow up with a clinician for anything flagged. |
 
 **Memory tag conventions (writes):**
 - Saved evaluations: `health.evaluation,user:[name]`
-- Saved vitals: `health.vital,user:[name]`
-- Saved lab results: `health.lab,user:[name]`
-- Saved health notes: `health.note,user:[name]`
+- Saved vitals: `health.vital,user:[name],health.vital.[type],source:manual`
+- Saved notes: `health.note,user:[name]`
 
 ---
 
 ## Step 0: Identify Requester and Target
 
-1. Confirm the active user (see Identity section above).
+1. Confirm the active user.
 2. Determine target: default = active user; Moriah saying "for Emil" → target is `user:emil`.
-3. All memory reads and writes filter by `user:[target]` tag.
+3. All memory reads filter by `user:[target]` except `mealplan.*` which is shared.
 
 ---
 
-## Data Source Registry
+## How the evaluator is structured
 
-The evaluator walks this registry in order. Each source contributes a **findings block** to the final evaluation. Sources that return nothing are skipped silently.
+The skill is **subtype-keyed**, not source-keyed. Any memory that matches a subtype below is evaluated — regardless of which MCP wrote it. A new vendor (e.g. `claude-withings`) starting to write tomorrow will be picked up automatically because its writes land under the same subtype tags.
 
-| Source | Status | Memory query | Produces |
-|---|---|---|---|
-| Prescriptions & supplements | Active | `memory_search(query: "prescriptions item", tags: ["prescriptions.item", "user:[name]"], limit: 50)` | Medication count, polypharmacy load, interaction flags, upcoming refills, expiring prescriptions, adherence risk |
-| Vitals (BP, HR, weight, etc.) | Planned | `memory_search(tags: ["health.vital", "user:[name]"])` | Trends, out-of-range flags — stub only; will be fleshed out when vitals source is added |
-| Lab results | Planned | `memory_search(tags: ["health.lab", "user:[name]"])` | Abnormal markers, trend deltas — stub only |
-| Sleep / activity | Planned | `memory_search(tags: ["health.activity", "user:[name]"])` | Weekly averages, deviation from baseline — stub only |
-| Self-reported symptoms | Planned | `memory_search(tags: ["health.note", "user:[name]"])` | Recent complaints, recurring issues — stub only |
+Run every evaluator in the list. Each returns either a **findings block** (one or more bullets) or nothing. Empty evaluators are skipped silently in the report.
 
-External data reaches this plugin through upstream vendor MCPs (Withings, Whoop, Google Health Connect bridge, etc.) that write `health.vital` and `health.activity` memories into `brian-mcp`. The exact shape those writers must follow is pinned in **[SCHEMA.md](../../SCHEMA.md)** — field names, units, required tags, idempotency rules, and source slugs. When implementing a Planned evaluator below, read from that schema; do not introduce ad-hoc shapes.
-
-When adding a new source later: add a row above, add a matching section under **Source Evaluators**, and update the **Overall Assessment** synthesis if the new source changes the risk model.
+Track which `source:` tags contributed across all evaluators — surface them in the report footer so the user knows what's in scope.
 
 ---
 
-## Step 1: Run a Health Evaluation
+## Subtype Evaluators — Vitals (`health.vital.*`)
 
-**Trigger**: "health check", "health summary", "evaluate my health", "run a health evaluation", "what are my health risks"
+Query pattern for each subtype:
+```
+memory_search(tags: ["health.vital.[subtype]", "user:[target]"], limit: 200)
+```
 
-1. Run Step 0.
-2. Walk each **Active** source in the registry. For each, call the memory query and run its evaluator (see **Source Evaluators** below).
-3. Synthesize an overall assessment (see **Overall Assessment**).
-4. Display the report (see **Report Format**).
-5. Offer to save: "Want me to save this evaluation so we can compare next time? (yes/no)"
-6. If yes: store a `health.evaluation` memory with the full report plus a `date: [YYYY-MM-DD]` field.
+Parse `measured_at` and subtype-specific fields from each memory per SCHEMA.md. Skip a subtype silently if no data.
 
-**Important**: If every Active source returns nothing, reply: "I don't have enough data yet to evaluate [name]'s health. Add medications via the prescriptions plugin first, or tell me about any recent vitals/labs."
+### weight
+- Compute 7-day, 28-day, 90-day rolling averages.
+- Flag `> 5%` change over 30 days (gain or loss). Flag `> 10%` over 90 days.
+- If `body_fat_pct` present, trend it too (flag `> 3pp` change over 30 days).
+- Latest value always shown.
+
+### blood_pressure
+- Compute 7-day and 28-day averages (systolic and diastolic separately).
+- Flag if 7-day systolic avg ≥ 140 OR diastolic avg ≥ 90 — "BP trending hypertensive — worth a check with your PCP."
+- Flag if 7-day systolic ≥ 180 OR diastolic ≥ 120 at any single reading — "Reading in the hypertensive-crisis range. Call your doctor today."
+- Flag if 7-day avg drops 20%+ below 28-day avg — possible symptom, worth a check.
+
+### heart_rate
+- Split by `context` field (resting / active / recovery / max).
+- For resting: flag 7-day avg > 90 bpm or sudden 10+ bpm rise vs 28-day avg.
+- For resting: flag 7-day avg < 45 bpm unless `notes` indicate trained athlete.
+
+### spo2
+- Flag any reading < 92%. Flag 7-day average < 94%.
+
+### body_temperature
+- Flag any reading ≥ 38.0 °C (100.4 °F) → "Fever recorded on [date]."
+- Flag sustained > 37.5 °C across multiple days.
+
+### blood_glucose
+- Split by `context` (fasting / post_meal / random / bedtime).
+- Fasting: flag > 125 mg/dL sustained (ADA diabetes threshold) or < 70 mg/dL any.
+- Post-meal (2h): flag > 180 mg/dL sustained.
+
+### respiratory_rate
+- Flag 7-day avg outside 12–20 breaths/min.
+
+### hrv
+- Compute 7-day and 28-day averages.
+- Flag 7-day avg down ≥ 15% vs 28-day baseline — "HRV trending down. Often a recovery signal; check sleep and stress."
 
 ---
 
-## Source Evaluators
+## Subtype Evaluators — Activity (`health.activity.*`)
 
-### Prescriptions & Supplements
+### sleep
+- 7-day avg duration, efficiency, deep+REM proportion.
+- Flag 7-day avg duration < 6h → "Sleep below 6h/night this week."
+- Flag efficiency 7-day avg < 80%.
+- Flag 3+ nights in the last 7 with sleep onset past 1am (from `started_at`).
 
-Input: list of items from `prescriptions.*` memory search, filtered to `user:[target]`.
+### workout
+- Count workouts per week, types, total duration, avg HR.
+- Informational: summarize last week. Flag only if 0 workouts for 14+ days AND any other metric (sleep, HRV, weight) is trending poorly.
+
+### steps_daily
+- 7-day average steps.
+- Flag 7-day avg below `goal × 0.7` if `goal` present. Else flag < 4,000 steps/day.
+
+### recovery_daily
+- 7-day average Whoop-style recovery score.
+- Flag 5+ consecutive days in red (< 34) → "Recovery in red for a week straight — suggests accumulating fatigue."
+- Flag 7-day avg < 40.
+
+### strain_daily
+- 7-day average strain score.
+- Flag pattern: sustained strain ≥ 15 alongside recovery 7-day avg < 50 → "High strain with low recovery — risk of burnout."
+
+---
+
+## Subtype Evaluators — Medications (`prescriptions.*`)
+
+Input: `memory_search(query: "prescriptions item", tags: ["prescriptions.item", "user:[target]"], limit: 50)`.
 
 Compute:
-- `rx_count` — items where `type === "prescription"`
-- `otc_count` — items where `type === "otc"`
-- `total_count` — all items
-- `polypharmacy_flag`:
-  - `rx_count >= 5` → "High polypharmacy load — 5+ prescriptions. Worth a medication review with your primary doctor."
-  - `total_count >= 10` → "High total pill burden — 10+ items between prescriptions and supplements. Consider a consolidation review."
-- `interaction_flags` — run the same **Interaction Check** table the prescriptions skill uses (see prescriptions/SKILL.md). Collect every pair that triggers, not just the first.
-- `refill_risk`:
-  - Any item with `refills_remaining === 0` and `renewal_needed !== true` → "At least one prescription is out of refills and has no renewal scheduled."
-  - Any item with `prescription_expires` within 30 days and no `doctor_reminder_date` → list each.
-- `adherence_risk` (heuristic):
-  - Items where `next_refill` is more than 14 days in the past → "Possible missed refill: [name] was due [date]."
-- `load_by_schedule` — count how many items are taken at each schedule tag (morning / lunch / evening / bedtime / as needed). Flag if any one slot exceeds 8 items: "Heavy [slot] load — [N] items at [slot]. Consider splitting."
+- `rx_count` / `otc_count` / `total_count`
+- Polypharmacy flags: `rx_count ≥ 5`, or `total_count ≥ 10`
+- Interaction flags: run the interaction table mirrored from the prescriptions plugin. Report every pair that triggers.
+- Refill risk: any item `refills_remaining === 0` with no `renewal_needed`; any `prescription_expires` within 30 days.
+- Adherence risk: items where `next_refill` is more than 14 days past.
+- Load by schedule slot: count per `morning | lunch | evening | bedtime | as_needed`. Flag any slot > 8 items.
+- Cross-reference with vitals: if BP meds are on the list and BP subtype is trending hypertensive → explicitly note "BP medications present but BP trending high — possible adherence or dosing issue."
 
-Output block:
+---
+
+## Subtype Evaluator — Nutrition (`food.entry` from food-log plugin)
+
+Input: `memory_search(query: "food entry [target]", tags: ["food.entry", "user:[target]"], limit: 14)` (last 14 days).
+
+For each day, parse `totals: { calories, protein_g, carbs_g, fat_g }`. Skip days with no data.
+
+Compute over the last 7 days of logged entries:
+- Avg daily calories, avg protein (g and g/kg if `weight` vital recent is known), avg carbs, avg fat.
+- Protein goal heuristic: `1.2 × weight_kg` grams/day for adults. Flag if 7-day avg is below 75% of that.
+- Flag 3+ days with logged calories < 1200 (rapid/restrictive intake) OR > 4000 (possible logging error or high-stress eating).
+- Note logging frequency: "6 of last 7 days logged" — if < 4/7, report "Food-log coverage thin this week — treat these numbers as directional."
+
+Cross-reference with medications:
+- If the prescriptions list includes anything flagged as "take with food" and food-log shows days with < 3 logged eating windows → note "Some meds work best taken with food; your log shows [N] days with sparse eating windows."
+
+---
+
+## Subtype Evaluator — Dietary Pattern (`mealplan.week` — shared)
+
+Input: load the current week's and last week's plans.
 
 ```
-MEDICATIONS & SUPPLEMENTS
-• Active items: [total_count] ([rx_count] prescription, [otc_count] OTC)
-• Load by schedule: morning [N] | lunch [N] | evening [N] | bedtime [N] | as-needed [N]
-[• Polypharmacy: [flag text] — if triggered]
-[• Interactions to review:
-   – [item A] + [item B] — [reason]
-   (repeat for each pair)
- — if any]
-[• Refill risk:
-   – [item] — out of refills, no renewal scheduled
-   – [item] — prescription expires [date] ([N] days)
- — if any]
-[• Possible missed refills:
-   – [item] — due [date], [N] days overdue
- — if any]
+memory_search(query: "mealplan week [monday-date]", tags: ["mealplan.week"], limit: 4)
 ```
 
-### Vitals (Planned)
+This is shared family data — use it only as a household pattern signal, never as a personal attribution.
 
-Stub — render nothing today. When implemented, this block will aggregate BP, HR, weight, glucose, etc. from `health.vital` memories, flag out-of-range values, and summarize trends over 30/90/365 days.
+Compute:
+- Variety: distinct proteins and cuisines across 7 days (look at recipe titles and tags). Flag if ≥ 4 of 7 dinners share the same primary protein or cuisine.
+- Vegetable proxy: count recipes whose tags include `vegetarian`, `vegetable-heavy`, or `salad`. Flag if 0 of 7 across two consecutive weeks.
+- Medication/allergy conflicts: for the active user, check `prescriptions.*` notes for any "avoid X" mentions. Scan the meal-plan's recipe titles + ingredient lists (fetch via `recipes.*` when needed) for matches and flag.
 
-### Lab Results (Planned)
-
-Stub — render nothing today. When implemented, will pull `health.lab` memories and flag abnormal markers against standard reference ranges (with a per-user override allowed on the memory entry).
-
-### Sleep / Activity (Planned)
-
-Stub — render nothing today.
-
-### Self-Reported Symptoms (Planned)
-
-Stub — render nothing today.
+Output a short "Household dietary pattern" block — do NOT treat it as a personal verdict.
 
 ---
 
 ## Overall Assessment
 
-Combine signals from all active source blocks into a single **status + key concerns + suggested next steps** summary at the top of the report.
+Synthesize signals across all evaluators into one of three statuses:
 
-**Status** — one of:
-- `Stable` — zero flags across all sources
-- `Watch` — one or more informational flags (e.g. moderate interactions, upcoming expirations), no urgent items
-- `Action suggested` — at least one flag with clinical or refill urgency (out of refills with no renewal; prescription expiring < 14 days; possible missed refill on a chronic med)
+- **Stable** — zero flags
+- **Watch** — informational flags only (e.g. modest trends, dietary variety notes, upcoming refills)
+- **Action suggested** — at least one flag with clinical or refill urgency (BP crisis reading, out-of-refills with no renewal, extended low recovery, fever, hypoglycemia reading, etc.)
 
-**Key concerns**: up to 3 bullets drawn from the strongest flags across all sources.
+**Key concerns**: up to 3 bullets drawn from the strongest flags across all evaluators.
 
-**Suggested next steps**: concrete, short. Examples:
-- "Schedule a medication review with Dr. [name] — [rx_count] prescriptions, [polypharmacy reasoning]."
+**Suggested next steps**: short, concrete.
+- "Schedule a medication review with Dr. [name]."
 - "Call [pharmacy] to renew [medication] — expires [date]."
-- "Ask your pharmacist about spacing [item A] and [item B]."
+- "Shift bedtime earlier this week — sleep 7-day avg at 5h 40m."
+- "Hit 1.5 L water and one vegetable side with the next three dinners."
 
 ---
 
@@ -171,27 +215,27 @@ Suggested next steps:
 • [bullet]
 
 ────────────────────────────────
-[Source blocks in order — skip any that produced no findings]
+[Subtype blocks in order: Vitals → Activity → Medications → Nutrition → Dietary pattern — skip any that produced no findings]
 
-[Prescriptions block]
-
-[Vitals block — when available]
-
-[Labs block — when available]
+[Vitals block]
+[Activity block]
+[Medications block]
+[Nutrition block]
+[Dietary pattern block]
 
 ────────────────────────────────
-Data sources used: [list active sources that contributed]
+Sources used: [comma-separated list of source tags that contributed — e.g. "prescriptions, food-log, mealplan, withings, whoop, manual"]
+Coverage: [brief note on what was missing — e.g. "No vitals this period; Withings not yet writing."]
+
 Not a diagnosis — share with your clinician for anything flagged.
 ```
 
 ---
 
-## Step 2: Save an Evaluation Snapshot
+## Save / Compare Snapshots
 
-**Trigger**: User answers "yes" to the save prompt, or explicitly says "save this evaluation", "snapshot my health".
-
-Content structure:
-
+### Save a snapshot
+Triggered on user confirmation or explicit "save this".
 ```
 health.evaluation: [Full Name] — [YYYY-MM-DD]
 user: [name]
@@ -199,68 +243,61 @@ date: [YYYY-MM-DD]
 status: [Stable | Watch | Action suggested]
 rx_count: [N]
 otc_count: [N]
-polypharmacy_flag: [true | false]
-interaction_pairs: [count]
-refill_risks: [count]
+flags: [summary counts per category]
+sources_used: [comma-separated list]
 report: |
-  [full report text from Report Format]
+  [full report text]
 ```
+Tags: `health.evaluation,user:[name]`.
 
-Tags: `health.evaluation,user:[name]`
+### Compare to previous
+Trigger: "compare my health", "did anything change since last time".
 
-Reply: "Saved. Next time, say 'compare my health' and I'll diff against this snapshot."
+1. Load `health.evaluation` memories for the user, sorted newest first.
+2. If < 2: "I only have [0 or 1] snapshot. Run a health check and save it, then come back after your next one."
+3. Produce today's evaluation (do not save).
+4. Diff key numbers vs most recent saved snapshot: rx_count, flag counts per category, status change, and any newly appearing or resolved flags.
+5. Display today's report, then a CHANGES section, then offer to save.
 
 ---
 
-## Step 3: Compare to a Previous Snapshot
+## Manual Write Paths
 
-**Trigger**: "compare my health", "did anything change since last time", "diff my health"
+Accept writes even when an evaluator stub exists elsewhere — the data accrues for trend queries.
 
-1. Run Step 0.
-2. Load all `health.evaluation` memories for the user, sorted newest first.
-3. If fewer than 2: "I only have [0 or 1] snapshot for you. Run a health check and save it, then come back after your next one."
-4. Run Step 1 to produce today's evaluation (do not save yet).
-5. Diff key numeric fields vs. most recent saved snapshot:
-   - `rx_count` delta, `otc_count` delta
-   - Newly appeared interaction pairs, dropped pairs
-   - Newly appeared refill risks
-   - Status change (e.g. Watch → Action suggested)
-6. Display today's report first, then:
+**Triggers**: "log my BP 128/82", "record my weight 82.3 kg", "log my blood sugar 118 fasting", "note: fatigue today".
+
+For vitals/activity, write in the SCHEMA.md shape with `source:manual`:
 
 ```
-CHANGES SINCE [prev snapshot date]
-• Prescriptions: [prev] → [now] ([+/-N])
-• Interactions to review: [prev] → [now]
-[• New flags since then:
-   – [flag]
- — if any]
-[• Resolved since then:
-   – [flag]
- — if any]
+health.vital: [type] [value] [unit]
+user: [name]
+source: manual
+source_id: manual-[name]-[type]-[ISO timestamp]
+type: [subtype]
+measured_at: [ISO 8601 with offset, user-local]
+ingested_at: [ISO 8601 UTC now]
+[subtype-specific fields per SCHEMA.md]
 ```
+Tags: `health.vital,user:[name],health.vital.[subtype],source:manual`.
 
-7. Offer to save the new snapshot.
+For notes: `health.note` tagged `user:[name]`, free text content.
+
+Confirm the write with a one-line readback. Do not retroactively re-run the evaluator unless the user asks.
 
 ---
 
-## Step 4: Record a Vital / Lab / Note (Stub — light support today)
+## Email
 
-**Trigger**: "log my BP [systolic]/[diastolic]", "record lab: [name] [value] [unit]", "note: [text]"
+Triggers: "email me my weekly summary", "send this report to Dr. [name]".
 
-Even though the planned source evaluators are not implemented yet, accept the write so data accumulates for when evaluators come online.
-
-1. Parse: source type (vital | lab | note), name, value, unit, date (default today).
-2. Store memory:
-   ```
-   health.[type]: [name] [value] [unit]
-   user: [name]
-   date: [YYYY-MM-DD]
-   value: [value]
-   unit: [unit]
-   notes: [optional]
-   ```
-   Tags: `health.[type],user:[name]`
-3. Reply: "Logged. I'll factor this in once the [vitals/labs/notes] evaluator is live — today's summary still only uses prescriptions."
+Rules (apply the marketplace email contract):
+- Send only on explicit request.
+- brian-email is send-only. Never treat it as storage — the report text continues to live in `health.evaluation` when saved.
+- Resolve recipient names via the `contacts` plugin (`contacts.contact`, `category:medical` or `care-team`). If unresolved, ask.
+- For a clinician recipient, trim to the structured summary and omit free-text notes unless the user approves.
+- Confirm recipient, subject, and a preview of the body before sending.
+- Plain text. Short subject — "Health summary — [Name] — [date range]".
 
 ---
 
@@ -268,15 +305,21 @@ Even though the planned source evaluators are not implemented yet, accept the wr
 
 | Situation | Handling |
 |---|---|
-| `HEALTH_USER` and `PRESCRIPTIONS_USER` both unset | Ask once per session: "What's your name — Charles, Moriah, Jack, or Quincy?" |
-| No prescription items and no other data | "I don't have enough data yet. Add medications via the prescriptions plugin first." |
-| Cross-person request (except Moriah→Emil) | "I keep health data private. I can only evaluate [Name]'s health with them directly." |
-| Memory read fails | "I couldn't reach the memory service. Try again in a moment, or check the Brian tunnel." |
-| Interaction table disagreement with prescriptions skill | Source of truth is `prescriptions/SKILL.md`. When that table changes, update this skill to match. |
-| User asks for a diagnosis | Decline gently: "I can summarize patterns and flag things worth asking a clinician, but I won't diagnose. Want me to pull together a list for your next appointment?" |
+| No user identifier set | Ask once: "Charles, Moriah, Jack, or Quincy?" |
+| No data in any evaluator | "I don't have enough data yet to evaluate [name]'s health. Add medications via the prescriptions plugin, log some food, or wait for the Withings/Whoop MCPs to come online." |
+| Cross-person request (except Moriah→Emil) | "I keep health data private." |
+| Memory read failure | "I couldn't reach the memory service. Try again shortly or check the Brian tunnel." |
+| Interaction table disagreement with prescriptions skill | Source of truth is `prescriptions/SKILL.md`. When that table changes, update this skill. |
+| User asks for a diagnosis | "I summarize patterns and flag things worth asking a clinician, but I won't diagnose. Want me to pull together a list for your next appointment?" |
 
 ---
 
 ## Tone
 
-Calm, concrete, never alarmist. Frame flags as "worth discussing" rather than "wrong". Always close with a reminder that this is a summary for self-awareness, not medical advice. No emoji, no dramatic language.
+Calm, concrete, never alarmist. Frame flags as "worth discussing" rather than "wrong." Always close with a reminder that this is a summary for self-awareness, not medical advice. No emoji, no dramatic language.
+
+---
+
+## Storage rule
+
+All persistent data written by this skill lives in brian-mcp memory under `health.*` with `user:[name]`. No local files. No external stores. brian-email is send-only and never used for storage.

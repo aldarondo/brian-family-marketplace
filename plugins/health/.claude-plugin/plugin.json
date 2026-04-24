@@ -1,5 +1,5 @@
 {
   "name": "health",
-  "description": "Private personal health aggregator — pulls data from prescriptions and other sources to produce a health evaluation for a single family member",
-  "version": "0.1.0"
+  "description": "Private personal health aggregator — reads any health data written to brian-mcp memory (prescriptions, food-log, meal-plan, Withings, Whoop, Apple/Google Health, manual) and produces a unified status, concerns, and recommendations per user",
+  "version": "0.2.0"
 }
