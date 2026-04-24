@@ -109,6 +109,14 @@
       "category": "family",
       "tags": ["travel", "trips", "itinerary", "packing", "shared"],
       "access": "all"
+    },
+    {
+      "name": "energy",
+      "source": "./plugins/energy",
+      "description": "Home energy reporting aggregator — reads coordinator telemetry (solar, battery, pool heater, EV charging, grid) from brian-mcp and produces daily/weekly/monthly rollups and emailable summaries. Read-only — does not control devices.",
+      "category": "household",
+      "tags": ["energy", "solar", "ev", "pool", "reporting", "private"],
+      "access": "charles"
     }
   ]
 }

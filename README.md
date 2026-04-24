@@ -50,6 +50,7 @@ Then install the plugins you need:
 | `maintenance` | All family | Home maintenance — recurring tasks, last-done log, overdue/upcoming view |
 | `gifts` | All family | Birthday and gift idea tracker with given-history and upcoming reminders |
 | `travel` | All family | Trip planner — itineraries, packing lists, booking confirmations |
+| `energy` | Charles only | Home energy reporting — reads solar/battery/pool/EV coordinator telemetry from brian-mcp and produces daily/weekly/monthly rollups. Read-only; does not control devices. |
 
 ## Environment Variables
 
@@ -105,6 +106,7 @@ Each plugin uses a unique prefix to prevent collisions:
 | maintenance | `maintenance.` |
 | gifts | `gifts.` |
 | travel | `travel.` |
+| energy | `energy.` (household-scoped — no `user:` tag) |
 
 ## Outgoing Email (brian-email MCP)
 
@@ -118,6 +120,8 @@ Several plugins expose a second MCP server named `email` pointing at `https://br
 | maintenance | "email me this month's maintenance list" |
 | gifts | "email upcoming birthdays to the family" |
 | travel | "email the Colorado itinerary to everyone going" |
+| health | "email me my weekly health summary" |
+| energy | "email me the weekly energy summary" |
 
 Rules every plugin follows when sending:
 - Only send on explicit user request.
@@ -125,12 +129,23 @@ Rules every plugin follows when sending:
 - Confirm recipient, subject, and a body preview before sending.
 - Send plain-text bodies; keep subjects short.
 
+## Reporting Skills vs Coordinator MCPs
+
+Some capabilities split between **coordinator MCPs** (which do things — start the pool heater, charge the Tesla, adjust solar export) and **reporting skills in this marketplace** (which aggregate the data and answer "how much did we use this week?"). The canonical example is the `energy` skill:
+
+- The solar, pool-heater, and EV-charging coordinator MCPs live elsewhere (wired into brian-telegram). Each writes its telemetry into brian-mcp following [`plugins/energy/SCHEMA.md`](plugins/energy/SCHEMA.md).
+- The `energy` skill is **read-only**. It never starts or stops anything. Its job is rollups, trends, and emailed summaries.
+- Claude routes action requests ("start the pool heater") directly to the coordinator MCPs based on their tool descriptions — no skill layer needed for action dispatch.
+
+When you add a new capability, decide up front whether you need the reporting layer. If all you want is one-shot actions, skip the skill.
+
 ## Architecture
 
 ```
 GitHub (this repo) — plugin catalog + skill definitions
 Brian Home Server  — mcp-memory-service (shared memory backend)
                    — brian-email (send-only outgoing email)
+                   — coordinator MCPs (solar, pool, EV charging, etc. — own their actions)
 Cloudflare Tunnel  — https://brian.aldarondo.family/mcp    (memory)
                    — https://brian.aldarondo.family/email  (email)
 ```
@@ -145,7 +160,7 @@ Emil interacts via Google Nest only. Brian's supervisor layer handles his skill 
 
 | Person | Plugins |
 |---|---|
-| Charles | grocery-list, recipes, prescriptions, health, food-log, meal-plan, vehicles, contacts, maintenance, gifts, travel, jellyfin, roadmap |
+| Charles | grocery-list, recipes, prescriptions, health, food-log, meal-plan, vehicles, contacts, maintenance, gifts, travel, jellyfin, roadmap, energy |
 | Moriah | grocery-list, recipes, prescriptions, health, food-log, meal-plan, contacts, gifts, travel |
 | Jack | grocery-list, recipes, meal-plan, contacts, gifts, travel |
 | Quincy | grocery-list, recipes, meal-plan, contacts, gifts, travel |
