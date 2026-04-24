@@ -1,0 +1,5 @@
+{
+  "name": "meal-plan",
+  "description": "Weekly family meal plan — builds a 7-day menu from saved recipes and pushes missing ingredients to the grocery list",
+  "version": "1.0.0"
+}

@@ -39,9 +39,31 @@ Each plugin owns a unique prefix — never write memories outside your plugin's 
 - `prescriptions.` — prescriptions (scoped per-user via `user:[name]` tag)
 - `food.` — food-log (scoped per-user via `user:[name]` tag)
 - `roadmap.` — roadmap (scoped per-user via `user:[name]` tag)
+- `mealplan.` — meal-plan
+- `vehicles.` — vehicles
+- `contacts.` — contacts
+- `maintenance.` — maintenance
+- `gifts.` — gifts
+- `travel.` — travel
+
+## Storage Rule (mandatory)
+All persistent data for every plugin MUST use brian-mcp memory at `https://brian.aldarondo.family/mcp`. No local files, no external databases, no other memory services. If a skill needs to save something, it goes in memory under that plugin's namespace. Writing data anywhere else is a bug.
+
+## Outgoing Email (brian-email MCP)
+Plugins that need to send email use a second MCP server named `email`, exposed at `https://brian.aldarondo.family/email` behind the same Cloudflare Access service token (`BRIAN_MCP_CLIENT_ID` / `BRIAN_MCP_CLIENT_SECRET`).
+
+Contract for every plugin that uses email:
+- brian-email is **send-only**. It is not a data store. All persistent state stays in brian-mcp memory under the plugin's namespace.
+- Only send when the user explicitly asks.
+- Resolve recipient names through the `contacts` plugin (`contacts.contact`). If unresolved, ask.
+- Confirm recipient, subject, and preview before sending.
+- Send plain-text bodies, short subjects.
+
+Currently wired for email: meal-plan, vehicles, contacts, maintenance, gifts, travel. Existing plugins (grocery-list, recipes, prescriptions, health, jellyfin, food-log, roadmap) can be upgraded by adding the `email` server block to their `mcp/config.json` and an Email section to their SKILL.md.
 
 ## Confirmed
 - Memory endpoint: `https://brian.aldarondo.family/mcp` (production, Cloudflare Access)
+- Email endpoint: `https://brian.aldarondo.family/email` (brian-email MCP, same Cloudflare Access service token) — verify exact URL/path against brian-email deployment
 - Auth: service token via `BRIAN_MCP_CLIENT_ID` + `BRIAN_MCP_CLIENT_SECRET` env vars
 - Repo: public at `aldarondo/brian-family-marketplace`
 

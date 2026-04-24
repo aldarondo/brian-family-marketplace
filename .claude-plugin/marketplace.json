@@ -61,6 +61,54 @@
       "category": "dev",
       "tags": ["dev", "github", "roadmap", "private"],
       "access": "charles"
+    },
+    {
+      "name": "meal-plan",
+      "source": "./plugins/meal-plan",
+      "description": "Weekly family meal plan — builds a 7-day menu from saved recipes and pushes missing ingredients to the grocery list",
+      "category": "family",
+      "tags": ["meal-plan", "recipes", "grocery", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "vehicles",
+      "source": "./plugins/vehicles",
+      "description": "Shared family vehicle registry — service history, registration and insurance renewals, per-car notes",
+      "category": "household",
+      "tags": ["vehicles", "maintenance", "renewals", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "contacts",
+      "source": "./plugins/contacts",
+      "description": "Shared family contact directory — emergency, medical providers and care team (including hospice / end-of-life), schools, service providers",
+      "category": "household",
+      "tags": ["contacts", "medical", "care-team", "emergency", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "maintenance",
+      "source": "./plugins/maintenance",
+      "description": "Home maintenance tracker — recurring tasks (HVAC, smoke detectors, gutters, seasonal) with last-done log and upcoming view",
+      "category": "household",
+      "tags": ["maintenance", "home", "recurring", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "gifts",
+      "source": "./plugins/gifts",
+      "description": "Birthday and gift idea tracker — per-person idea lists, given history, and upcoming birthday/anniversary reminders",
+      "category": "family",
+      "tags": ["gifts", "birthdays", "anniversaries", "shared"],
+      "access": "all"
+    },
+    {
+      "name": "travel",
+      "source": "./plugins/travel",
+      "description": "Family trip planner — trips with dates and travelers, itineraries, packing lists, and booking confirmations",
+      "category": "family",
+      "tags": ["travel", "trips", "itinerary", "packing", "shared"],
+      "access": "all"
     }
   ]
 }

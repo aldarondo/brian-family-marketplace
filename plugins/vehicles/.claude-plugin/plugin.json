@@ -1,0 +1,5 @@
+{
+  "name": "vehicles",
+  "description": "Shared family vehicle registry — service history, registration and insurance renewal dates, fuel type, VIN, and per-car notes",
+  "version": "1.0.0"
+}

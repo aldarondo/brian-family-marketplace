@@ -12,10 +12,14 @@
 ## 🔲 Backlog
 
 ### New Plugins
-<!-- none -->
+- [ ] `[Human]` Confirm brian-email deployment and exact endpoint URL (currently assumed `https://brian.aldarondo.family/email` sharing the same Cloudflare Access service token as brian-mcp); correct the 6 new plugin configs if different
+- [ ] `[Code]` Smoke-test each new plugin (meal-plan, vehicles, contacts, maintenance, gifts, travel) per `tests/SMOKE_TESTS.md` pattern; add test rows for each
+- [ ] `[Code]` Refactor `health` plugin into a generic memory-side aggregator (v0.2.0): drop Active/Planned distinction, key evaluators off subtype tags (`health.vital.weight`, `health.activity.sleep`, etc.) so any source that follows SCHEMA.md is picked up automatically; wire email for "email me my weekly summary" — deferred pending Charles's confirmation on scope
+- [ ] `[Code]` Upgrade existing plugins (grocery-list, recipes, prescriptions, health, food-log, jellyfin, roadmap) to include the `email` MCP server + SKILL.md Email section when a use case warrants it
 
 ### Phase 4 — Access Control
 - [x] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
+- [ ] `[Code]` Add Access labels and smoke tests for the 6 new plugins (meal-plan, vehicles, contacts, maintenance, gifts, travel — all `access: all`)
 
 ### Phase 6 — Family Onboarding
 - [ ] `[Human]` Confirm GitHub accounts for Moriah, Jack, Quincy (public repo — no collab needed, but good to note)
@@ -25,6 +29,9 @@
 - [x] `[Code]` Document update workflow in README (plugin versioning + family update flow)
 
 ## ✅ Completed
+- [x] `[Code]` 2026-04-24 — Added 6 family plugins (all v1.0.0, access: all): **meal-plan** (reads `recipes.*`, writes `grocery.*` on request), **vehicles** (service + renewals), **contacts** (incl. `care-team` category for hospice / end-of-life with after-hours fields), **maintenance** (recurring tasks + next-due), **gifts** (persons + ideas + given history + upcoming birthdays), **travel** (trips + itineraries + packing). All wired with brian-email MCP (send-only) and strict namespace storage in brian-mcp. marketplace.json, CLAUDE.md, README.md, CHANGELOG updated.
+- [x] `[Code]` 2026-04-24 — Marketplace-level brian-email awareness: `email` MCP server alongside `memory` in each new plugin's mcp/config.json; contract documented in CLAUDE.md (send-only, explicit-ask-only, contacts-as-resolver, confirm-before-send); README updated with architecture diagram and per-plugin email table.
+- [x] `[Code]` 2026-04-24 — Codified storage rule in CLAUDE.md + README: every plugin's persistent data must live in brian-mcp memory under its own namespace. No local files, no other stores.
 - [x] `[Code]` 2026-04-23 — roadmap plugin v1.0.0: plugin.json, mcp/config.json, SKILL.md (list/register/add-entry/view/recent/remove with three GitHub write flows — local clone, `gh` CLI, github MCP), README.md; added to marketplace.json (access: charles); namespace `roadmap.*` registered in CLAUDE.md and README.md
 - [x] `[Code]` 2026-04-22 — food-log plugin v1.0.0: plugin.json, mcp/config.json, SKILL.md (log from screenshot, view today/past day, weekly summary, delete), README.md; added to marketplace.json (access: per-user); wired into brian-telegram bot.js (PLUGIN_VERSIONS + PLUGIN_ACCESS + /help food-log)
 - [x] `[Code]` 2026-04-20 — jellyfin plugin v1.0.1: new-releases + old-releases skills redesigned for Telegram (conversational MCP-tool flow, natural pick language, genre/decade filters, movies+TV in one pass); added to marketplace.json (access: charles)
