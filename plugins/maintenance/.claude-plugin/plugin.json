@@ -1,0 +1,5 @@
+{
+  "name": "maintenance",
+  "description": "Home maintenance tracker — recurring tasks (HVAC filters, smoke detectors, gutters, seasonal) with due dates, last-done log, and upcoming view",
+  "version": "1.0.0"
+}

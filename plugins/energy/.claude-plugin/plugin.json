@@ -1,0 +1,5 @@
+{
+  "name": "energy",
+  "description": "Home energy reporting aggregator — reads coordinator data (solar, battery, pool heater, EV charging, grid) from brian-mcp memory and produces daily/weekly/monthly rollups, trend flags, and emailable summaries. Read-only — does not control devices.",
+  "version": "0.1.0"
+}
