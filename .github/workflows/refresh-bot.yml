@@ -1,0 +1,34 @@
+name: Refresh brian-telegram plugins
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - plugins/**
+      - .claude-plugin/marketplace.json
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install cloudflared
+        run: |
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o /tmp/cloudflared.deb
+          sudo dpkg -i /tmp/cloudflared.deb && sudo apt-get install -y sshpass
+
+      - name: Pull marketplace update into running container
+        env:
+          SSHPASS: ${{ secrets.NAS_SSH_PASSWORD }}
+          CF_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no \
+            -o "ProxyCommand=cloudflared access ssh --hostname nas-ssh.aldarondo.family --id $CF_CLIENT_ID --secret $CF_CLIENT_SECRET" \
+            charles@nas-ssh.aldarondo.family \
+            "echo '$SSHPASS' | sudo -S docker exec brian-telegram sh -c '
+              git -C /home/brian/.claude/plugins/marketplaces/brian-family pull origin main 2>&1 || true
+              for p in grocery-list recipes prescriptions health jellyfin food-log meal-plan vehicles contacts maintenance gifts travel roadmap energy; do
+                claude plugin install \${p}@brian-family 2>&1 || true
+              done
+            '"
