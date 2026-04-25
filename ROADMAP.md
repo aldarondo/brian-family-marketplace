@@ -13,14 +13,15 @@
 
 ### New Plugins
 - [ ] `[Human]` Confirm brian-email deployment and exact endpoint URL (currently assumed `https://brian.aldarondo.family/email` sharing the same Cloudflare Access service token as brian-mcp); correct plugin configs if different
-- [ ] `[Code]` Smoke-test each new plugin (meal-plan, vehicles, contacts, maintenance, gifts, travel, energy) per `tests/SMOKE_TESTS.md` pattern; add test rows for each
-- [ ] `[Code]` Upgrade remaining plugins (grocery-list, recipes, prescriptions, food-log, jellyfin, roadmap) to include the `email` MCP server + SKILL.md Email section when a use case warrants it
+- [x] `[Code]` Smoke-test each new plugin (meal-plan, vehicles, contacts, maintenance, gifts, travel, energy) per `tests/SMOKE_TESTS.md` pattern; add test rows for each
+- [ ] `[Human]` Run smoke tests for all new plugins per `tests/SMOKE_TESTS.md` — manual verification required (meal-plan, vehicles, contacts, maintenance, gifts, travel, energy)
+- [x] `[Code]` Upgrade remaining plugins (grocery-list, recipes, prescriptions, food-log, jellyfin, roadmap) to include the `email` MCP server + SKILL.md Email section when a use case warrants it
 - [ ] `[Human]` Get each home-energy coordinator MCP (solar, pool heater, EV charging, battery, whole-home meter) writing telemetry to brian-mcp per `plugins/energy/SCHEMA.md`. Until at least one coordinator is writing, the `energy` skill has nothing to aggregate.
 - [ ] `[Code]` Once coordinators are live, backfill historical daily rollups if the coordinators expose history (one-time job per source)
 
 ### Phase 4 — Access Control
 - [x] `[Code]` Confirm all active plugin READMEs have access labels (grocery-list, recipes, prescriptions — all done)
-- [ ] `[Code]` Add Access labels and smoke tests for the 6 new plugins (meal-plan, vehicles, contacts, maintenance, gifts, travel — all `access: all`)
+- [x] `[Code]` Add Access labels and smoke tests for the 6 new plugins (meal-plan, vehicles, contacts, maintenance, gifts, travel — all `access: all`)
 
 ### Phase 6 — Family Onboarding
 - [ ] `[Human]` Confirm GitHub accounts for Moriah, Jack, Quincy (public repo — no collab needed, but good to note)
@@ -30,6 +31,9 @@
 - [x] `[Code]` Document update workflow in README (plugin versioning + family update flow)
 
 ## ✅ Completed
+- [x] `[Code]` 2026-04-24 — Smoke test procedures complete for all 7 new plugins: meal-plan, vehicles, contacts, maintenance, gifts, travel test rows confirmed present; energy test row added to `tests/SMOKE_TESTS.md` (accounts for empty coordinator-data state)
+- [x] `[Code]` 2026-04-24 — Access labels confirmed present in all 6 new plugin READMEs (meal-plan, vehicles, contacts, maintenance, gifts, travel — all `access: all`); smoke test procedures added to `tests/SMOKE_TESTS.md` for all 6.
+- [x] `[Code]` 2026-04-24 — Email upgrade for grocery-list, recipes, prescriptions, food-log: added `email` MCP server block to mcp/config.json and an Email section to SKILL.md for each. Jellyfin and roadmap skipped (no warranted email use case). JSON validation passed.
 - [x] `[Code]` 2026-04-24 — **energy** plugin v0.1.0 (access: charles): read-only home energy reporting aggregator. Reads coordinator telemetry (solar, pool, EV, battery, grid) from brian-mcp per `plugins/energy/SCHEMA.md` and produces daily/weekly/monthly rollups with trend flags. Does not control devices — action requests route to coordinator MCPs directly. Email wired for weekly summaries. CLAUDE.md and README.md document the reporting-skill-vs-coordinator-MCP split.
 - [x] `[Code]` 2026-04-24 — **health** v0.2.0 refactor: generic subtype-keyed evaluators (not vendor-keyed) so any MCP writing to SCHEMA.md is picked up automatically. New evaluators for all vital subtypes, all activity subtypes, nutrition (food-log), and household dietary pattern (meal-plan with medication-conflict scan). Medication↔vitals cross-reference. Email wired.
 - [x] `[Code]` 2026-04-24 — Added 6 family plugins (all v1.0.0, access: all): **meal-plan** (reads `recipes.*`, writes `grocery.*` on request), **vehicles** (service + renewals), **contacts** (incl. `care-team` category for hospice / end-of-life with after-hours fields), **maintenance** (recurring tasks + next-due), **gifts** (persons + ideas + given history + upcoming birthdays), **travel** (trips + itineraries + packing). All wired with brian-email MCP (send-only) and strict namespace storage in brian-mcp. marketplace.json, CLAUDE.md, README.md, CHANGELOG updated.

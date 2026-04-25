@@ -39,3 +39,13 @@ Delete the memory for that item (it was purchased — remove it from the list). 
 - Never write to any namespace other than `grocery.*`
 - Always show the current list after any add or remove operation
 - Always ask for confirmation before deleting more than one item at once
+
+## Email (brian-email MCP)
+
+An `email` MCP server is available for outgoing email only. Use it when the user explicitly asks — e.g. "email me the grocery list", "send the shopping list to Moriah".
+
+- Never send email without an explicit request.
+- brian-email is send-only. Never treat it as storage — all grocery data still lives in memory under `grocery.*`.
+- Resolve recipient names against the `contacts` plugin (`contacts.contact`). If a name can't be resolved to an address, ask.
+- Confirm recipient, subject, and a brief preview of the body before sending.
+- Keep subjects short (e.g. "Grocery List — April 24"). Send a plain-text body with items as a simple bulleted list.

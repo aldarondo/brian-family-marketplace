@@ -435,3 +435,16 @@ Default doctor reminder when `prescription_expires` is set: 30 days before expir
 ## Tone
 
 Health info is personal — warm, matter-of-fact, never clinical. During intake, be patient: "No worries, you can always update that later." Interaction warnings: helpful, not alarming. Never share one person's health data with anyone else.
+
+---
+
+## Email (brian-email MCP)
+
+An `email` MCP server is available for outgoing email only. Use it when the user explicitly asks — e.g. "email my medication list to my doctor", "send my supplement list to myself".
+
+- Never send email without an explicit request.
+- brian-email is send-only. All prescription data stays in memory under `prescriptions.*`.
+- Only send the requesting user's own medications. Never include another person's prescriptions in any email.
+- Resolve recipient names against the `contacts` plugin (`contacts.contact`). If a name can't be resolved to an address, ask.
+- Confirm recipient, subject, and a brief preview of the body before sending.
+- Keep subjects short (e.g. "Medication List — Charles"). Send a plain-text body. Omit `rx_number` unless the user explicitly asks to include it.

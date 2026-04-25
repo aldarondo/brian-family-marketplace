@@ -66,3 +66,13 @@ Examples:
 - Always show the full recipe after adding or updating
 - Always confirm before deleting
 - When importing from URL, always show the parsed recipe and get approval before saving
+
+## Email (brian-email MCP)
+
+An `email` MCP server is available for outgoing email only. Use it when the user explicitly asks — e.g. "email this recipe to Moriah", "send me the chocolate cake recipe".
+
+- Never send email without an explicit request.
+- brian-email is send-only. All recipe data stays in memory under `recipes.*`.
+- Resolve recipient names against the `contacts` plugin (`contacts.contact`). If a name can't be resolved to an address, ask.
+- Confirm recipient, subject, and a brief preview of the body before sending.
+- Keep subjects short (e.g. "Recipe: Chicken Tikka Masala"). Send the full recipe as a plain-text body including ingredients and instructions.
